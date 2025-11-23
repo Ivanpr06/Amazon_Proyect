@@ -1,4 +1,4 @@
-import { cart, removeFromCard } from "../data/cart.js";
+import { cart, removeFromCard, calculateCartQuantity } from "../data/cart.js";
 import { products } from "../data/products.js";
 import { moneyCentsToDollars } from "./utils/money.js";
 
@@ -18,7 +18,7 @@ cart.forEach((cartItem) => {
 
 
   cartSummaryHTML += `
-    <div class="cart-item-container">
+    <div class="cart-item-container-${matchingProduct.id}">
             <div class="delivery-date">
               Delivery date: Tuesday, June 21
             </div>
@@ -38,8 +38,10 @@ cart.forEach((cartItem) => {
                   <span>
                     Quantity: <span class="quantity-label">${cartItem.quantity}</span>
                   </span>
-                  <span class="update-quantity-link link-primary">
+                  <span class="update-quantity-link link-primary" data-product-id="${matchingProduct.id}">
                     Update
+                    <input class="quantity-input" type="number" min="0">
+                    <span class="save-quantity-link">Save</span>
                   </span>
                   <span class="delete-quantity-link link-primary" data-product-id="${matchingProduct.id}">
                     Delete
@@ -98,12 +100,34 @@ cart.forEach((cartItem) => {
 
 document.querySelector('.order-summary').innerHTML = cartSummaryHTML;
 
-document.querySelectorAll('.delete-quantity-link')
-  .forEach((link) => {
-    link.addEventListener('click', () => {
-      let productId = link.dataset.productId;
-      removeFromCard(productId);
-      console.log(cart);
+document.querySelectorAll('.update-quantity-link')
+  .forEach((linkUpdate) => {
+    linkUpdate.addEventListener('click', () => {
+      let productUpdateId = linkUpdate.dataset.productId;
+      console.log(productUpdateId);
+
     });
   });
-console.log(cart);
+
+
+document.querySelectorAll('.delete-quantity-link')
+  .forEach((linkDelete) => {
+    linkDelete.addEventListener('click', () => {
+      let productDeleteId = linkDelete.dataset.productId;
+      console.log(productDeleteId);
+
+      removeFromCard(productDeleteId);
+
+      let container = document.querySelector(`.cart-item-container-${productDeleteId}`);
+      container.remove();
+      updateCartQuantity();
+    });
+  });
+
+function updateCartQuantity() {
+  let cartQuantity = calculateCartQuantity();
+
+  document.querySelector('.return-to-home-link').innerHTML = `${cartQuantity} items`;
+}
+
+updateCartQuantity();
