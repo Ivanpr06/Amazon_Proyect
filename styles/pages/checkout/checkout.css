@@ -122,7 +122,23 @@
 .quantity-input{
   width: 30px;
   border-radius: 5px;
-  border: 1px solid rgb(150, 150, 150);
+  border: 1px solid rgb(200, 200, 200);
+ display: none;
+}
+
+.quantity-input,
+.save-quantity-link{
+    display: none;
+}
+
+.is-editing-quantity .quantity-input,
+.is-editing-quantity .save-quantity-link {
+    display: inline;
+}
+
+.is-editing-quantity .update-quantity-link,
+.is-editing-quantity .quantity-label {
+    display: none;
 }
 
 @media (max-width: 1000px) {
