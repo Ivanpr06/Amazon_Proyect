@@ -30,7 +30,29 @@
   /* Use align-items: start; to prevent the elements
      in the grid from stretching vertically. */
   align-items: start;
+  gap: 50px;
 }
+
+.order-summary {
+  max-height: 70vh; 
+  overflow-y: auto;     
+  padding-right: 10px;
+}
+
+.order-summary::-webkit-scrollbar {
+  width: 8px;
+}
+
+.order-summary::-webkit-scrollbar-thumb {
+  background-color: #c7c7c7;
+  border-radius: 4px;
+}
+
+.order-summary::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+
 
 @media (max-width: 1000px) {
   .main {
