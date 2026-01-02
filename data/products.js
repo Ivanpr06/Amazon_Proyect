@@ -1,14 +1,98 @@
-export function getProducts(productId){
+import { moneyCentsToDollars } from "../scripts/utils/money.js";
+
+export function getProducts(productId) {
   let matchingProduct;
 
-    products.forEach((product) => {
-      if (product.id === productId) {
-        matchingProduct = product;
-      }
-    });
-    return matchingProduct;
+  products.forEach((product) => {
+    if (product.id === productId) {
+      matchingProduct = product;
+    }
+  });
+  return matchingProduct;
 }
 
+class Product {
+  // Si es un objeto hay que añadir {} al constructor normal
+  constructor({ id, image, name, rating, priceCents, keywords }) {
+    this.id = id;
+    this.image = image;
+    this.name = name;
+    this.rating = rating;
+    this.priceCents = priceCents;
+    this.keywords = keywords;
+  }
+
+  getStarsUrl() {
+    return `images/ratings/rating-${this.rating.stars * 10}.png`;
+  }
+
+  getPriceDollars() {
+    return moneyCentsToDollars(this.priceCents);
+  }
+
+  extraInfoHTML() {
+    return '';
+  }
+}
+
+class ClothingProduct extends Product {
+  constructor(productDetails) {
+    super(productDetails);
+    this.type = productDetails.type;
+    this.sizeChartLink = productDetails.sizeChartLink;
+  }
+
+  extraInfoHTML() {
+    return `
+      <a href="${this.sizeChartLink}" target="_blank">Size Chart</a>
+    `
+  }
+}
+
+
+const tshirt = new ClothingProduct({
+  id: "83d4ca15-0f35-48f5-b7a3-1ea210004f2e",
+  image: "images/products/adults-plain-cotton-tshirt-2-pack-teal.jpg",
+  name: "Adults Plain Cotton T-Shirt - 2 Pack",
+  rating: {
+    stars: 4.5,
+    count: 56
+  },
+  priceCents: 799,
+  keywords: [
+    "tshirts",
+    "apparel",
+    "mens"
+  ],
+  type: "clothing",
+  sizeChartLink: "images/clothing-size-chart.png"
+});
+
+export let products = [];
+
+export function loadProducts(fun) {
+  const xhr = new XMLHttpRequest();
+
+  xhr.addEventListener('load', () => {
+    products = JSON.parse(xhr.response).map((productDetail) => {
+      if (productDetail.type === "clothing") {
+        return new ClothingProduct(productDetail);
+      }
+      return new Product(productDetail)
+    });
+
+    console.log('load products');
+
+    fun();
+    
+  });
+
+  xhr.open('GET', 'https://supersimplebackend.dev/products');
+  xhr.send();
+}
+
+/*
+FORMA ANTIGUA
 export const products = [
   {
     id: "e43638ce-6aa0-4b85-b27f-e1d07eb678c6",
@@ -668,4 +752,12 @@ export const products = [
       "mens"
     ]
   }
-];
+].map((productDetail) => {
+  if(productDetail.type === "clothing") {
+    return new ClothingProduct(productDetail);
+  }
+  return new Product(productDetail)
+});
+
+console.log(products);
+*/

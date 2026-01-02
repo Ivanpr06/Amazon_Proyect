@@ -35,7 +35,7 @@ export function renderOrderSummary() {
                     ${matchingProduct.name}
                   </div>
                   <div class="product-price">
-                    ${moneyCentsToDollars(matchingProduct.priceCents)}
+                    ${matchingProduct.getPriceDollars()}
                   </div>
                   <div class="product-quantity product-quantity-${matchingProduct.id}">
                     <span>
@@ -133,7 +133,7 @@ export function renderOrderSummary() {
   document.querySelectorAll(".delete-quantity-link").forEach((linkDelete) => {
     linkDelete.addEventListener("click", () => {
       let productDeleteId = linkDelete.dataset.productId;
-      console.log(productDeleteId);
+      //console.log(productDeleteId);
 
       removeFromCard(productDeleteId);
 
