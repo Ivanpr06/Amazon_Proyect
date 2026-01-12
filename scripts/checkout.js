@@ -5,6 +5,29 @@ import { renderPaymentSummary } from "./checkout/paymentSummary.js";
 import { loadProducts, loadProductsFetch } from "../data/products.js";
 import { loadCart } from "../data/cart.js";
 
+// async reduce codigo de promise
+async function loadPage() {
+    try {
+        // await espera a que se resuelva la promesa
+        await loadProductsFetch()
+
+        const value = await new Promise((resolve) => {
+            loadProducts(() => {
+                resolve('value3');
+            });
+        });
+    } catch (error) {
+        console.error('Unexpected error. Please try again later.');
+    }
+    
+
+    renderOrderSummary();
+    renderPaymentSummary();
+}
+
+loadPage()
+
+/*
 Promise.all([
     loadProductsFetch(),
     new Promise((resolve) => {
@@ -24,6 +47,7 @@ Promise.all([
     renderOrderSummary();
     renderPaymentSummary();
 });
+*/
 
 /*
 new Promise((resolve) => {
