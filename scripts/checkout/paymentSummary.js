@@ -61,30 +61,33 @@ export function renderPaymentSummary() {
 
     document.querySelector('.place-order-button').addEventListener('click', async () => {
         try {
-            const cartForBackend = cart.map(item => ({
-                productId: item.productId,
-                quantity: item.quantity,
-                deliveryOptionId: String(item.deliveryOptionId)
-            }));
+            if (cart.length === 0) {
+                alert("Introduzca productos en el carrito")
+            } else {
+                const cartForBackend = cart.map(item => ({
+                    productId: item.productId,
+                    quantity: item.quantity,
+                    deliveryOptionId: String(item.deliveryOptionId)
+                }));
 
-            const response = await fetch('https://supersimplebackend.dev/orders', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    cart: cartForBackend
-                })
-            });
+                const response = await fetch('https://supersimplebackend.dev/orders', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        cart: cartForBackend
+                    })
+                });
 
-            const order = await response.json();
-            addOrder(order);
+                const order = await response.json();
+                addOrder(order);
 
-        } catch (error) {
-            console.log('Unexpected error. Try again later.');
-        }
-
-        window.location.href = 'orders.html';
-        localStorage.removeItem('cart');        
-    });
+                window.location.href = 'orders.html';
+                localStorage.removeItem('cart');
+            }
+            } catch (error) {
+                console.log('Unexpected error. Try again later.');
+            }
+        });
 }
