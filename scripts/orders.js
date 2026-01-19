@@ -1,5 +1,5 @@
 import { orders } from '../data/orders.js';
-import { getProducts, loadProductsFetch } from '../data/products.js';
+import { getProducts, loadProductsFetch, products } from '../data/products.js';
 import { moneyCentsToDollars } from './utils/money.js';
 import dayjs from 'https://unpkg.com/dayjs@1.11.10/esm/index.js';
 import { calculateCartQuantity, addToCard } from '../data/cart.js';
@@ -8,8 +8,21 @@ async function loadPage() {
   await loadProductsFetch();
 
   let orderHTML = '';
-  console.log(orders);
+
+  const url = new URL(window.location.href);
+  let search = url.searchParams.get('search');
+
+  if (search) {
+    search = search.toLowerCase();
+  }
+
   orders.forEach(order => {
+    const productsHTML = productsListHTML(order);
+
+    if (search && productsHTML === '') {
+      return '';
+    }
+
     orderHTML += `
     <div class="order-container">
           
@@ -37,6 +50,7 @@ async function loadPage() {
         </div>
         `;
   });
+  document.querySelector('.orders-grid').innerHTML = orderHTML;
 
   function productsListHTML(order) {
     let productsOrderHTML = '';
@@ -48,6 +62,10 @@ async function loadPage() {
     order.products.forEach((productDetails) => {
       const product = getProducts(productDetails.productId);
 
+      if (search && !product.name.toLowerCase().includes(search)) {
+        return '';
+      }
+      
       productsOrderHTML += `
       <div class="product-image-container">
         <img src="${product.image}">
@@ -104,5 +122,22 @@ async function loadPage() {
   }
   buyAgain();
 
+  function searchProduct() {
+    search = document.querySelector('.search-bar').value;
+
+    if (search.trim() !== "") {
+      window.location.href = `orders.html?search=${search}`;
+    }
+  }
+
+  document.querySelector('.search-bar').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      searchProduct();
+    }
+  });
+
+  document.querySelector('.search-button').addEventListener('click', (e) => {
+    searchProduct();
+  });
 }
 loadPage();
